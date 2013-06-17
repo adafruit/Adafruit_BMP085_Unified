@@ -19,6 +19,7 @@
 #endif
 
 #include <Wire.h>
+#include <Math.h>
 #include <limits.h>
 
 #include "Adafruit_BMP085.h"
@@ -322,14 +323,29 @@ void Adafruit_BMP085::getTemperature(float *temp)
 
 /**************************************************************************/
 /*!
-    Converts pressure in hPa to altitude in meters
+    Calculates the altitude (in meters) from the specified atmospheric
+    pressure (in hPa), sea-level pressure (in hPa), and temperature (in °C)
+
+    @param  seaLevel      Sea-level pressure in hPa
+    @param  atmospheric   Atmospheric pressure in hPa
+    @param  temp          Temperature in degrees Celsius
 */
 /**************************************************************************/
-float Adafruit_BMP085::pressureToAltitude(float pressure_hPa)
+float Adafruit_BMP085::pressureToAltitude(float seaLevel, float atmospheric, float temp)
 {
-  return (pressure_hPa
-      / (float) pow(1.0F - (SENSORS_PRESSURE_SEALEVELHPA / 44330.0f), 5.255f))
-      / 10;
+  /* Hyposometric formula:                      */
+  /*                                            */
+  /*     ((P0/P)^(1/5.257) - 1) * (T + 273.15)  */
+  /* h = -------------------------------------  */
+  /*                   0.0065                   */
+  /*                                            */
+  /* where: h   = height (in meters)            */
+  /*        P0  = sea-level pressure (in hPa)   */
+  /*        P   = atmospheric pressure (in hPa) */
+  /*        T   = temperature (in °C)           */
+
+  return (((float)pow((seaLevel/atmospheric), 0.190223F) - 1.0F)
+         * (temp + 273.15F)) / 0.0065F;
 }
 
 /**************************************************************************/

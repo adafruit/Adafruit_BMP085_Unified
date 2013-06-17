@@ -23,6 +23,7 @@
     
    History
    =======
+   2013/JUN/17  - Updated altitude calculations (KTOWN)
    2013/FEB/13  - First version (KTOWN)
 */
    
@@ -79,7 +80,7 @@ void setup(void)
 */
 /**************************************************************************/
 void loop(void) 
-{  
+{
   /* Get a new sensor event */ 
   sensors_event_t event;
   bmp.getEvent(&event);
@@ -87,8 +88,33 @@ void loop(void)
   /* Display the results (barometric pressure is measure in hPa) */
   if (event.pressure)
   {
+    /* Display atmospheric pressue in hPa */
     Serial.print(event.pressure); Serial.print(" hPa");
-    Serial.print(" ("); Serial.print(bmp.pressureToAltitude(event.pressure)); Serial.println(" m)");
+    
+    /* Calculating altitude with reasonable accuracy requires pressure    *
+     * sea level pressure for your position at the moment the data is     *
+     * converted, as well as the ambient temperature in degress           *
+     * celcius.  If you don't have these values, a 'generic' value of     *
+     * 1013.25 hPa can be used (defined as SENSORS_PRESSURE_SEALEVELHPA   *
+     * in sensors.h), but this isn't ideal and will give variable         *
+     * results from one day to the next.                                  *
+     *                                                                    *
+     * You can usually find the current SLP value by looking at weather   *
+     * websites or from environmental information centers near any major  *
+     * airport.                                                           *
+     *                                                                    *
+     * For example, for Paris, France you can check the current mean      *
+     * pressure and sea level at: http://bit.ly/16Au8ol                   */
+     
+    float seaLevelPressure = SENSORS_PRESSURE_SEALEVELHPA;
+    float temperature;
+    bmp.getTemperature(&temperature);
+    
+    Serial.print(" ("); 
+    Serial.print(bmp.pressureToAltitude(seaLevelPressure, 
+                                        event.pressure,
+                                        temperature)); 
+    Serial.println(" m)");
   }
   else
   {

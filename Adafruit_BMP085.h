@@ -96,7 +96,7 @@ class Adafruit_BMP085 : public Adafruit_Sensor
     bool  begin(bmp085_mode_t mode = BMP085_MODE_ULTRAHIGHRES);
     void  getTemperature(float *temp);
     void  getPressure(float *pressure);
-    float pressureToAltitude(float pressure_hPa);
+    float pressureToAltitude(float seaLevel, float atmospheric, float temp);
     void  getEvent(sensors_event_t*);
     void  getSensor(sensor_t*);
 
