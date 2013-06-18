@@ -311,14 +311,28 @@ void Adafruit_BMP085::getPressure(float *pressure)
 /**************************************************************************/
 void Adafruit_BMP085::getTemperature(float *temp)
 {
-  int32_t ut, x1, x2;
+  int32_t UT, X1, X2, B5;     // following ds convention
+  float t;
 
-  readRawTemperature(&ut);
+  readRawTemperature(&UT);
 
-  x1 = (ut - _bmp085_coeffs.ac6) * _bmp085_coeffs.ac5 >> 15;
-  x2 = (_bmp085_coeffs.mc << 11) / (x1 + _bmp085_coeffs.md);
-  *temp = (x1+x2+8) >> 4;
-  *temp /= 10;
+  #if BMP085_USE_DATASHEET_VALS
+    // use datasheet numbers!
+    UT = 27898;
+    _bmp085_coeffs.ac6 = 23153;
+    _bmp085_coeffs.ac5 = 32757;
+    _bmp085_coeffs.mc = -8711;
+    _bmp085_coeffs.md = 2868;
+  #endif
+
+  // step 1
+  X1 = (UT - (int32_t)_bmp085_coeffs.ac6) * ((int32_t)_bmp085_coeffs.ac5) / pow(2,15);
+  X2 = ((int32_t)_bmp085_coeffs.mc * pow(2,11)) / (X1+(int32_t)_bmp085_coeffs.md);
+  B5 = X1 + X2;
+  t = (B5+8)/pow(2,4);
+  t /= 10;
+
+  *temp = t;
 }
 
 /**************************************************************************/

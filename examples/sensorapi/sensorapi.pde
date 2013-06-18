@@ -89,7 +89,9 @@ void loop(void)
   if (event.pressure)
   {
     /* Display atmospheric pressue in hPa */
-    Serial.print(event.pressure); Serial.print(" hPa");
+    Serial.print("Pressure:    ");
+    Serial.print(event.pressure);
+    Serial.println(" hPa");
     
     /* Calculating altitude with reasonable accuracy requires pressure    *
      * sea level pressure for your position at the moment the data is     *
@@ -106,19 +108,26 @@ void loop(void)
      * For example, for Paris, France you can check the current mean      *
      * pressure and sea level at: http://bit.ly/16Au8ol                   */
      
-    float seaLevelPressure = SENSORS_PRESSURE_SEALEVELHPA;
+    /* First we get the current temperature from the BMP085 */
     float temperature;
     bmp.getTemperature(&temperature);
-    
-    Serial.print(" ("); 
-    Serial.print(bmp.pressureToAltitude(seaLevelPressure, 
+    Serial.print("Temperature: ");
+    Serial.print(temperature);
+    Serial.println(" C");
+
+    /* Then convert the atmospheric pressure, SLP and temp to altitude    */
+    /* Update this next line with the current SLP for better results      */
+    float seaLevelPressure = SENSORS_PRESSURE_SEALEVELHPA;
+    Serial.print("Altitude:    "); 
+    Serial.print(bmp.pressureToAltitude(seaLevelPressure,
                                         event.pressure,
                                         temperature)); 
-    Serial.println(" m)");
+    Serial.println(" m");
+    Serial.println("");
   }
   else
   {
     Serial.println("Sensor error");
   }
-  delay(250);
+  delay(1000);
 }
