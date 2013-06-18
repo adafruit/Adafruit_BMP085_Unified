@@ -19,7 +19,7 @@
 #endif
 
 #include <Wire.h>
-#include <Math.h>
+#include <math.h>
 #include <limits.h>
 
 #include "Adafruit_BMP085.h"
