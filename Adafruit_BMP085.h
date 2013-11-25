@@ -88,10 +88,10 @@
     } bmp085_calib_data;
 /*=========================================================================*/
 
-class Adafruit_BMP085 : public Adafruit_Sensor
+class Adafruit_BMP085_Unified : public Adafruit_Sensor
 {
   public:
-    Adafruit_BMP085(int32_t sensorID = -1);
+    Adafruit_BMP085_Unified(int32_t sensorID = -1);
   
     bool  begin(bmp085_mode_t mode = BMP085_MODE_ULTRAHIGHRES);
     void  getTemperature(float *temp);

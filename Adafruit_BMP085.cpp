@@ -210,10 +210,10 @@ static void readRawPressure(int32_t *pressure)
  
 /**************************************************************************/
 /*!
-    @brief  Instantiates a new Adafruit_BMP085 class
+    @brief  Instantiates a new Adafruit_BMP085_Unified class
 */
 /**************************************************************************/
-Adafruit_BMP085::Adafruit_BMP085(int32_t sensorID) {
+Adafruit_BMP085_Unified::Adafruit_BMP085_Unified(int32_t sensorID) {
   _sensorID = sensorID;
 }
 
@@ -226,7 +226,7 @@ Adafruit_BMP085::Adafruit_BMP085(int32_t sensorID) {
     @brief  Setups the HW
 */
 /**************************************************************************/
-bool Adafruit_BMP085::begin(bmp085_mode_t mode)
+bool Adafruit_BMP085_Unified::begin(bmp085_mode_t mode)
 {
   // Enable I2C
   Wire.begin();
@@ -259,7 +259,7 @@ bool Adafruit_BMP085::begin(bmp085_mode_t mode)
     @brief  Gets the compensated pressure level in kPa
 */
 /**************************************************************************/
-void Adafruit_BMP085::getPressure(float *pressure)
+void Adafruit_BMP085_Unified::getPressure(float *pressure)
 {
   int32_t  ut = 0, up = 0, compp = 0;
   int32_t  x1, x2, b5, b6, x3, b3, p;
@@ -309,7 +309,7 @@ void Adafruit_BMP085::getPressure(float *pressure)
     @brief  Reads the temperatures in degrees Celsius
 */
 /**************************************************************************/
-void Adafruit_BMP085::getTemperature(float *temp)
+void Adafruit_BMP085_Unified::getTemperature(float *temp)
 {
   int32_t UT, X1, X2, B5;     // following ds convention
   float t;
@@ -345,7 +345,7 @@ void Adafruit_BMP085::getTemperature(float *temp)
     @param  temp          Temperature in degrees Celsius
 */
 /**************************************************************************/
-float Adafruit_BMP085::pressureToAltitude(float seaLevel, float atmospheric, float temp)
+float Adafruit_BMP085_Unified::pressureToAltitude(float seaLevel, float atmospheric, float temp)
 {
   /* Hyposometric formula:                      */
   /*                                            */
@@ -367,7 +367,7 @@ float Adafruit_BMP085::pressureToAltitude(float seaLevel, float atmospheric, flo
     @brief  Provides the sensor_t data for this sensor
 */
 /**************************************************************************/
-void Adafruit_BMP085::getSensor(sensor_t *sensor)
+void Adafruit_BMP085_Unified::getSensor(sensor_t *sensor)
 {
   /* Clear the sensor_t object */
   memset(sensor, 0, sizeof(sensor_t));
@@ -389,7 +389,7 @@ void Adafruit_BMP085::getSensor(sensor_t *sensor)
     @brief  Reads the sensor and returns the data as a sensors_event_t
 */
 /**************************************************************************/
-void Adafruit_BMP085::getEvent(sensors_event_t *event)
+void Adafruit_BMP085_Unified::getEvent(sensors_event_t *event)
 {
   float pressure_kPa;
 

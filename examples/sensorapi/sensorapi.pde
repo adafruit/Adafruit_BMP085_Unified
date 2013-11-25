@@ -27,7 +27,7 @@
    2013/FEB/13  - First version (KTOWN)
 */
    
-Adafruit_BMP085 bmp = Adafruit_BMP085(10085);
+Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
 
 /**************************************************************************/
 /*
