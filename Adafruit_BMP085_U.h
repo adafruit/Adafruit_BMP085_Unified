@@ -1,7 +1,9 @@
 /***************************************************************************
   This is a library for the BMP085 pressure sensor
 
-  Designed specifically to work with the Adafruit BMP085 Breakout
+  Designed specifically to work with the Adafruit BMP085 or BMP180 Breakout 
+  ----> http://www.adafruit.com/products/391
+  ----> http://www.adafruit.com/products/1603
 
   These displays use I2C to communicate, 2 pins are required to interface.
 
