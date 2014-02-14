@@ -340,7 +340,7 @@ void Adafruit_BMP085_Unified::getTemperature(float *temp)
 /**************************************************************************/
 /*!
     Calculates the altitude (in meters) from the specified atmospheric
-    pressure (in hPa), sea-level pressure (in hPa), and temperature (in °C)
+    pressure (in hPa), sea-level pressure (in hPa), and temperature (in ï¿½C)
 
     @param  seaLevel      Sea-level pressure in hPa
     @param  atmospheric   Atmospheric pressure in hPa
@@ -358,7 +358,7 @@ float Adafruit_BMP085_Unified::pressureToAltitude(float seaLevel, float atmosphe
   /* where: h   = height (in meters)            */
   /*        P0  = sea-level pressure (in hPa)   */
   /*        P   = atmospheric pressure (in hPa) */
-  /*        T   = temperature (in °C)           */
+  /*        T   = temperature (in ï¿½C)           */
 
   return (((float)pow((seaLevel/atmospheric), 0.190223F) - 1.0F)
          * (temp + 273.15F)) / 0.0065F;
@@ -403,5 +403,5 @@ void Adafruit_BMP085_Unified::getEvent(sensors_event_t *event)
   event->type      = SENSOR_TYPE_PRESSURE;
   event->timestamp = 0;
   getPressure(&pressure_kPa);
-  event->pressure = pressure_kPa / 100.0F; /* kPa to hPa */
+  event->pressure = pressure_kPa / 100.0F;
 }
