@@ -364,6 +364,22 @@ float Adafruit_BMP085_Unified::pressureToAltitude(float seaLevel, float atmosphe
          * (temp + 273.15F)) / 0.0065F;
 }
 
+float Adafruit_BMP085_Unified::seaLevelForAltitude(float altitude, float atmospheric, float temp)
+{
+  /* Hyposometric formula:                      */
+  /*                                            */
+  /* P0=((((h*0.0065)/(temp + 273.15F))+1)^(^/0.190223F))*P */
+  /*                                            */
+  /* where: h   = height (in meters)            */
+  /*        P0  = sea-level pressure (in hPa)   */
+  /*        P   = atmospheric pressure (in hPa) */
+  /*        T   = temperature (in �C)           */
+  
+  return (float)pow((((altitude*0.0065)/(temp + 273.15F))+1), (1.0/0.190223F))*atmospheric;
+}
+
+
+
 /**************************************************************************/
 /*!
     @brief  Provides the sensor_t data for this sensor
