@@ -212,6 +212,18 @@ static void readRawPressure(int32_t *pressure)
   #endif
 }
 
+/**************************************************************************/
+/*!
+    @brief  Compute B5 coefficient used in temperature & pressure calcs.
+*/
+/**************************************************************************/
+int32_t Adafruit_BMP085_Unified::computeB5(int32_t ut) {
+  int32_t X1 = (ut - (int32_t)_bmp085_coeffs.ac6) * ((int32_t)_bmp085_coeffs.ac5) >> 15;
+  int32_t X2 = ((int32_t)_bmp085_coeffs.mc << 11) / (X1+(int32_t)_bmp085_coeffs.md);
+  return X1 + X2;
+}
+
+
 /***************************************************************************
  CONSTRUCTOR
  ***************************************************************************/
@@ -278,9 +290,7 @@ void Adafruit_BMP085_Unified::getPressure(float *pressure)
   readRawPressure(&up);
 
   /* Temperature compensation */
-  x1 = (ut - (int32_t)(_bmp085_coeffs.ac6))*((int32_t)(_bmp085_coeffs.ac5))/pow(2,15);
-  x2 = ((int32_t)(_bmp085_coeffs.mc*pow(2,11)))/(x1+(int32_t)(_bmp085_coeffs.md));
-  b5 = x1 + x2;
+  b5 = computeB5(ut);
 
   /* Pressure compensation */
   b6 = b5 - 4000;
@@ -333,11 +343,8 @@ void Adafruit_BMP085_Unified::getTemperature(float *temp)
     _bmp085_coeffs.md = 2868;
   #endif
 
-  // step 1
-  X1 = (UT - (int32_t)_bmp085_coeffs.ac6) * ((int32_t)_bmp085_coeffs.ac5) / pow(2,15);
-  X2 = ((int32_t)_bmp085_coeffs.mc * pow(2,11)) / (X1+(int32_t)_bmp085_coeffs.md);
-  B5 = X1 + X2;
-  t = (B5+8)/pow(2,4);
+  B5 = computeB5(UT);
+  t = (B5+8) >> 4;
   t /= 10;
 
   *temp = t;

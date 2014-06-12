@@ -110,7 +110,8 @@ class Adafruit_BMP085_Unified : public Adafruit_Sensor
     void  getSensor(sensor_t*);
 
   private:
-    int32_t           _sensorID;
+    int32_t computeB5(int32_t ut);
+    int32_t _sensorID;
 };
 
 #endif
