@@ -115,13 +115,12 @@ void loop(void)
     Serial.print(temperature);
     Serial.println(" C");
 
-    /* Then convert the atmospheric pressure, SLP and temp to altitude    */
+    /* Then convert the atmospheric pressure, and SLP to altitude         */
     /* Update this next line with the current SLP for better results      */
     float seaLevelPressure = SENSORS_PRESSURE_SEALEVELHPA;
     Serial.print("Altitude:    "); 
     Serial.print(bmp.pressureToAltitude(seaLevelPressure,
-                                        event.pressure,
-                                        temperature)); 
+                                        event.pressure)); 
     Serial.println(" m");
     Serial.println("");
   }

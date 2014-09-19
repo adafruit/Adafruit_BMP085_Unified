@@ -353,7 +353,34 @@ void Adafruit_BMP085_Unified::getTemperature(float *temp)
 /**************************************************************************/
 /*!
     Calculates the altitude (in meters) from the specified atmospheric
-    pressure (in hPa), sea-level pressure (in hPa), and temperature (in �C)
+    pressure (in hPa), and sea-level pressure (in hPa).
+
+    @param  seaLevel      Sea-level pressure in hPa
+    @param  atmospheric   Atmospheric pressure in hPa
+*/
+/**************************************************************************/
+float Adafruit_BMP085_Unified::pressureToAltitude(float seaLevel, float atmospheric)
+{
+  // Equation taken from BMP180 datasheet (page 16):
+  //  http://www.adafruit.com/datasheets/BST-BMP180-DS000-09.pdf
+
+  // Note that using the equation from wikipedia can give bad results
+  // at high altitude.  See this thread for more information:
+  //  http://forums.adafruit.com/viewtopic.php?f=22&t=58064
+  
+  return 44330.0 * (1.0 - pow(atmospheric / seaLevel, 0.1903));
+}
+
+/**************************************************************************/
+/*!
+    Calculates the altitude (in meters) from the specified atmospheric
+    pressure (in hPa), and sea-level pressure (in hPa).  Note that this
+    function just calls the overload of pressureToAltitude which takes
+    seaLevel and atmospheric pressure--temperature is ignored.  The original
+    implementation of this function was based on calculations from Wikipedia
+    which are not accurate at higher altitudes.  To keep compatibility with
+    old code this function remains with the same interface, but it calls the
+    more accurate calculation.
 
     @param  seaLevel      Sea-level pressure in hPa
     @param  atmospheric   Atmospheric pressure in hPa
@@ -362,33 +389,49 @@ void Adafruit_BMP085_Unified::getTemperature(float *temp)
 /**************************************************************************/
 float Adafruit_BMP085_Unified::pressureToAltitude(float seaLevel, float atmospheric, float temp)
 {
-  /* Hyposometric formula:                      */
-  /*                                            */
-  /*     ((P0/P)^(1/5.257) - 1) * (T + 273.15)  */
-  /* h = -------------------------------------  */
-  /*                   0.0065                   */
-  /*                                            */
-  /* where: h   = height (in meters)            */
-  /*        P0  = sea-level pressure (in hPa)   */
-  /*        P   = atmospheric pressure (in hPa) */
-  /*        T   = temperature (in �C)           */
-
-  return (((float)pow((seaLevel/atmospheric), 0.190223F) - 1.0F)
-         * (temp + 273.15F)) / 0.0065F;
+  return pressureToAltitude(seaLevel, atmospheric);
 }
 
+/**************************************************************************/
+/*!
+    Calculates the pressure at sea level (in hPa) from the specified altitude 
+    (in meters), and atmospheric pressure (in hPa).  
+
+    @param  altitude      Altitude in meters
+    @param  atmospheric   Atmospheric pressure in hPa
+*/
+/**************************************************************************/
+float Adafruit_BMP085_Unified::seaLevelForAltitude(float altitude, float atmospheric)
+{
+  // Equation taken from BMP180 datasheet (page 17):
+  //  http://www.adafruit.com/datasheets/BST-BMP180-DS000-09.pdf
+
+  // Note that using the equation from wikipedia can give bad results
+  // at high altitude.  See this thread for more information:
+  //  http://forums.adafruit.com/viewtopic.php?f=22&t=58064
+  
+  return atmospheric / pow(1.0 - (altitude/44330.0), 5.255);
+}
+
+/**************************************************************************/
+/*!
+    Calculates the pressure at sea level (in hPa) from the specified altitude 
+    (in meters), and atmospheric pressure (in hPa).  Note that this
+    function just calls the overload of seaLevelForAltitude which takes
+    altitude and atmospheric pressure--temperature is ignored.  The original
+    implementation of this function was based on calculations from Wikipedia
+    which are not accurate at higher altitudes.  To keep compatibility with
+    old code this function remains with the same interface, but it calls the
+    more accurate calculation.
+
+    @param  altitude      Altitude in meters
+    @param  atmospheric   Atmospheric pressure in hPa
+    @param  temp          Temperature in degrees Celsius
+*/
+/**************************************************************************/
 float Adafruit_BMP085_Unified::seaLevelForAltitude(float altitude, float atmospheric, float temp)
 {
-  /* Hyposometric formula:                      */
-  /*                                            */
-  /* P0=((((h*0.0065)/(temp + 273.15F))+1)^(^/0.190223F))*P */
-  /*                                            */
-  /* where: h   = height (in meters)            */
-  /*        P0  = sea-level pressure (in hPa)   */
-  /*        P   = atmospheric pressure (in hPa) */
-  /*        T   = temperature (in �C)           */
-  
-  return (float)pow((((altitude*0.0065)/(temp + 273.15F))+1), (1.0/0.190223F))*atmospheric;
+  return seaLevelForAltitude(altitude, atmospheric);
 }
 
 
