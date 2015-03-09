@@ -463,7 +463,7 @@ void Adafruit_BMP085_Unified::getSensor(sensor_t *sensor)
     @brief  Reads the sensor and returns the data as a sensors_event_t
 */
 /**************************************************************************/
-void Adafruit_BMP085_Unified::getEvent(sensors_event_t *event)
+bool Adafruit_BMP085_Unified::getEvent(sensors_event_t *event)
 {
   float pressure_kPa;
 
@@ -476,4 +476,6 @@ void Adafruit_BMP085_Unified::getEvent(sensors_event_t *event)
   event->timestamp = 0;
   getPressure(&pressure_kPa);
   event->pressure = pressure_kPa / 100.0F;
+  
+  return true;
 }

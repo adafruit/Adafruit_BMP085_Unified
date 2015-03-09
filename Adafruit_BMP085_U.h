@@ -111,7 +111,7 @@ class Adafruit_BMP085_Unified : public Adafruit_Sensor
     // calculation is used which does not need temperature.
     float pressureToAltitude(float seaLevel, float atmospheric, float temp);
     float seaLevelForAltitude(float altitude, float atmospheric, float temp);
-    void  getEvent(sensors_event_t*);
+    bool  getEvent(sensors_event_t*);
     void  getSensor(sensor_t*);
 
   private:
