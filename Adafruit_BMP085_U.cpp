@@ -453,8 +453,8 @@ void Adafruit_BMP085_Unified::getSensor(sensor_t *sensor)
   sensor->sensor_id   = _sensorID;
   sensor->type        = SENSOR_TYPE_PRESSURE;
   sensor->min_delay   = 0;
-  sensor->max_value   = 300.0F;               // 300..1100 hPa
-  sensor->min_value   = 1100.0F;
+  sensor->max_value   = 1100.0F;               // 300..1100 hPa
+  sensor->min_value   = 300.0F;
   sensor->resolution  = 0.01F;                // Datasheet states 0.01 hPa resolution
 }
 
