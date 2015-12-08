@@ -1,0 +1,22 @@
+language: python
+python:
+    - "2.7"
+
+# Cache PlatformIO packages using Travis CI container-based infrastructure
+sudo: false
+cache:
+    directories:
+        - "~/.platformio"
+
+env:
+    - PLATFORMIO_CI_SRC=examples/sensorapi/sensorapi.pde
+
+install:
+    - pip install -U platformio
+    
+    # Install dependent libraries
+    # http://platformio.org/#!/lib/show/31/Adafruit-SSD1306
+    - platformio lib install 31
+
+script:
+    - platformio ci --lib=. --board=uno --board=megaatmega1280
