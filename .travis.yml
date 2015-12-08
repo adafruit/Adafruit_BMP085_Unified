@@ -15,7 +15,7 @@ install:
     - pip install -U platformio
     
     # Install dependent libraries
-    # http://platformio.org/#!/lib/show/31/Adafruit-SSD1306
+    # http://platformio.org/#!/lib/show/31/Adafruit-Unified-Sensor
     - platformio lib install 31
 
 script:
