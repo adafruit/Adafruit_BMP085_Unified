@@ -79,7 +79,6 @@ static void read8(byte reg, uint8_t *value)
   #else
     *value = Wire.receive();
   #endif  
-  Wire.endTransmission();
 }
 
 /**************************************************************************/
@@ -102,7 +101,6 @@ static void read16(byte reg, uint16_t *value)
   #else
     *value = (Wire.receive() << 8) | Wire.receive();
   #endif  
-  Wire.endTransmission();
 }
 
 /**************************************************************************/
