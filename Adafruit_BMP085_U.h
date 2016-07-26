@@ -99,6 +99,7 @@
 class Adafruit_BMP085_Unified : public Adafruit_Sensor
 {
   public:
+    Adafruit_BMP085_Unified(TwoWire* wire, int32_t sensorID = -1);
     Adafruit_BMP085_Unified(int32_t sensorID = -1);
   
     bool  begin(bmp085_mode_t mode = BMP085_MODE_ULTRAHIGHRES);
@@ -116,6 +117,15 @@ class Adafruit_BMP085_Unified : public Adafruit_Sensor
 
   private:
     int32_t computeB5(int32_t ut);
+    void writeCommand(byte reg, byte value);
+    void read8(byte reg, uint8_t *value);
+    void read16(byte reg, uint16_t *value);
+    void readS16(byte reg, int16_t *value);
+    void readCoefficients(void);
+    void readRawTemperature(int32_t *temperature);
+    void readRawPressure(int32_t *pressure);
+
+    TwoWire* _wire;
     int32_t _sensorID;
 };
 

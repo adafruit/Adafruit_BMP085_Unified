@@ -46,17 +46,17 @@ static uint8_t           _bmp085Mode;
     @brief  Writes an 8 bit value over I2C
 */
 /**************************************************************************/
-static void writeCommand(byte reg, byte value)
+void Adafruit_BMP085_Unified::writeCommand(byte reg, byte value)
 {
-  Wire.beginTransmission((uint8_t)BMP085_ADDRESS);
+  _wire->beginTransmission((uint8_t)BMP085_ADDRESS);
   #if ARDUINO >= 100
-    Wire.write((uint8_t)reg);
-    Wire.write((uint8_t)value);
+    _wire->write((uint8_t)reg);
+    _wire->write((uint8_t)value);
   #else
-    Wire.send(reg);
-    Wire.send(value);
+    _wire->send(reg);
+    _wire->send(value);
   #endif
-  Wire.endTransmission();
+  _wire->endTransmission();
 }
 
 /**************************************************************************/
@@ -64,22 +64,22 @@ static void writeCommand(byte reg, byte value)
     @brief  Reads an 8 bit value over I2C
 */
 /**************************************************************************/
-static void read8(byte reg, uint8_t *value)
+void Adafruit_BMP085_Unified::read8(byte reg, uint8_t *value)
 {
-  Wire.beginTransmission((uint8_t)BMP085_ADDRESS);
+  _wire->beginTransmission((uint8_t)BMP085_ADDRESS);
   #if ARDUINO >= 100
-    Wire.write((uint8_t)reg);
+    _wire->write((uint8_t)reg);
   #else
-    Wire.send(reg);
+    _wire->send(reg);
   #endif
-  Wire.endTransmission();
-  Wire.requestFrom((uint8_t)BMP085_ADDRESS, (byte)1);
+  _wire->endTransmission();
+  _wire->requestFrom((uint8_t)BMP085_ADDRESS, (byte)1);
   #if ARDUINO >= 100
-    *value = Wire.read();
+    *value = _wire->read();
   #else
-    *value = Wire.receive();
+    *value = _wire->receive();
   #endif  
-  Wire.endTransmission();
+  _wire->endTransmission();
 }
 
 /**************************************************************************/
@@ -87,22 +87,22 @@ static void read8(byte reg, uint8_t *value)
     @brief  Reads a 16 bit value over I2C
 */
 /**************************************************************************/
-static void read16(byte reg, uint16_t *value)
+void Adafruit_BMP085_Unified::read16(byte reg, uint16_t *value)
 {
-  Wire.beginTransmission((uint8_t)BMP085_ADDRESS);
+  _wire->beginTransmission((uint8_t)BMP085_ADDRESS);
   #if ARDUINO >= 100
-    Wire.write((uint8_t)reg);
+    _wire->write((uint8_t)reg);
   #else
-    Wire.send(reg);
+    _wire->send(reg);
   #endif
-  Wire.endTransmission();
-  Wire.requestFrom((uint8_t)BMP085_ADDRESS, (byte)2);
+  _wire->endTransmission();
+  _wire->requestFrom((uint8_t)BMP085_ADDRESS, (byte)2);
   #if ARDUINO >= 100
-    *value = (Wire.read() << 8) | Wire.read();
+    *value = (_wire->read() << 8) | _wire->read();
   #else
-    *value = (Wire.receive() << 8) | Wire.receive();
+    *value = (_wire->receive() << 8) | _wire->receive();
   #endif  
-  Wire.endTransmission();
+  _wire->endTransmission();
 }
 
 /**************************************************************************/
@@ -110,7 +110,7 @@ static void read16(byte reg, uint16_t *value)
     @brief  Reads a signed 16 bit value over I2C
 */
 /**************************************************************************/
-static void readS16(byte reg, int16_t *value)
+void Adafruit_BMP085_Unified::readS16(byte reg, int16_t *value)
 {
   uint16_t i;
   read16(reg, &i);
@@ -122,7 +122,7 @@ static void readS16(byte reg, int16_t *value)
     @brief  Reads the factory-set coefficients
 */
 /**************************************************************************/
-static void readCoefficients(void)
+void Adafruit_BMP085_Unified::readCoefficients(void)
 {
   #if BMP085_USE_DATASHEET_VALS
     _bmp085_coeffs.ac1 = 408;
@@ -157,7 +157,7 @@ static void readCoefficients(void)
 
 */
 /**************************************************************************/
-static void readRawTemperature(int32_t *temperature)
+void Adafruit_BMP085_Unified::readRawTemperature(int32_t *temperature)
 {
   #if BMP085_USE_DATASHEET_VALS
     *temperature = 27898;
@@ -175,7 +175,7 @@ static void readRawTemperature(int32_t *temperature)
 
 */
 /**************************************************************************/
-static void readRawPressure(int32_t *pressure)
+void Adafruit_BMP085_Unified::readRawPressure(int32_t *pressure)
 {
   #if BMP085_USE_DATASHEET_VALS
     *pressure = 23843;
@@ -230,11 +230,20 @@ int32_t Adafruit_BMP085_Unified::computeB5(int32_t ut) {
  
 /**************************************************************************/
 /*!
-    @brief  Instantiates a new Adafruit_BMP085_Unified class
+    @brief  Instantiates a new Adafruit_BMP085_Unified class with the specified I2C wire
 */
 /**************************************************************************/
-Adafruit_BMP085_Unified::Adafruit_BMP085_Unified(int32_t sensorID) {
+Adafruit_BMP085_Unified::Adafruit_BMP085_Unified(TwoWire* wire, int32_t sensorID) {
+  _wire = wire;
   _sensorID = sensorID;
+}
+
+/**************************************************************************/
+/*!
+@brief  Instantiates a new Adafruit_BMP085_Unified class using the default I2C wire
+*/
+/**************************************************************************/
+Adafruit_BMP085_Unified::Adafruit_BMP085_Unified(int32_t sensorID) : Adafruit_BMP085_Unified(&Wire, sensorID){
 }
 
 /***************************************************************************
@@ -249,7 +258,7 @@ Adafruit_BMP085_Unified::Adafruit_BMP085_Unified(int32_t sensorID) {
 bool Adafruit_BMP085_Unified::begin(bmp085_mode_t mode)
 {
   // Enable I2C
-  Wire.begin();
+  _wire->begin();
 
   /* Mode boundary check */
   if ((mode > BMP085_MODE_ULTRAHIGHRES) || (mode < 0))
