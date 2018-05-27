@@ -1,4 +1,4 @@
-#Adafruit Unified BMP085/BMP180 Driver (Barometric Pressure Sensor) #
+# Adafruit Unified BMP085/BMP180 Driver (Barometric Pressure Sensor)  #
 
 This driver is for the Adafruit BMP085 Breakout (http://www.adafruit.com/products/391) or BMP180 breakout (http://www.adafruit.com/products/1603), and is based on Adafruit's Unified Sensor Library (Adafruit_Sensor).
 
