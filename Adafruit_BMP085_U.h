@@ -96,14 +96,23 @@
     } bmp085_calib_data;
 /*=========================================================================*/
 
+#define TEMPERATURE_READ_DELAY_MICROS 4500
+#define PRESSURE_ULTRALOW_READ_DELAY_MICROS 4500
+#define PRESSURE_STANDARD_READ_DELAY_MICROS 7500
+#define PRESSURE_HIGH_READ_DELAY_MICROS 13500
+#define PRESSURE_ULTRAHIGH_READ_DELAY_MICROS 25500
+
+#define DATA_READY_TEMPERATURE 1
+#define DATA_READY_PRESSURE 2
+
 class Adafruit_BMP085_Unified : public Adafruit_Sensor
 {
   public:
     Adafruit_BMP085_Unified(int32_t sensorID = -1);
   
     bool  begin(bmp085_mode_t mode = BMP085_MODE_ULTRAHIGHRES);
-    void  getTemperature(float *temp);
-    void  getPressure(float *pressure);
+    bool  getTemperature(float *temp);
+    bool  getPressure(float *pressure);
     float pressureToAltitude(float seaLevel, float atmospheric);
     float seaLevelForAltitude(float altitude, float atmospheric);
     // Note that the next two functions are just for compatibility with old
@@ -114,9 +123,32 @@ class Adafruit_BMP085_Unified : public Adafruit_Sensor
     bool  getEvent(sensors_event_t*);
     void  getSensor(sensor_t*);
 
+    int8_t isDataReady();
+
   private:
     int32_t computeB5(int32_t ut);
+    bool writeCommand(byte reg, byte value);
+    bool read8(byte reg, uint8_t *value);
+    bool read16(byte reg, uint16_t *value);
+    bool readS16(byte reg, int16_t *value);
+    bool readCoefficients(void);
+    bool readRawTemperature(int32_t *temperature);
+    bool readRawPressure(int32_t *pressure);
+
+    bool requestTemperature();
+    bool requestPressure();
+    bool readTemperature(uint16_t *temperature);
+    bool readPressure(int32_t *pressure);
+
     int32_t _sensorID;
+    unsigned long readyStart;
+    unsigned long readyDelay;
+    bool readingTemperature;
+    bool readyTemperature;
+    bool readingPressure;
+    bool readyPressure;
+    uint16_t lastTemperature;
+    int32_t lastPressure;
 };
 
 #endif
