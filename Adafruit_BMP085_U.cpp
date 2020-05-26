@@ -368,7 +368,10 @@ float Adafruit_BMP085_Unified::pressureToAltitude(float seaLevel, float atmosphe
   // at high altitude.  See this thread for more information:
   //  http://forums.adafruit.com/viewtopic.php?f=22&t=58064
   
-  return 44330.0 * (1.0 - pow(atmospheric / seaLevel, 0.1903));
+  // return 44330.0 * (1.0 - pow(atmospheric / seaLevel, 0.1903));
+  // Pow is not compatible with ESP8266 Arduino IDE. This is a workaround
+  // See http://stackoverflow.com/questions/4985221/how-will-you-implement-powa-b-in-c-condition-follows
+  return 44330.0 * (1.0 - exp(0.1903 * log(atmospheric / seaLevel)));
 }
 
 /**************************************************************************/
@@ -410,7 +413,10 @@ float Adafruit_BMP085_Unified::seaLevelForAltitude(float altitude, float atmosph
   // at high altitude.  See this thread for more information:
   //  http://forums.adafruit.com/viewtopic.php?f=22&t=58064
   
-  return atmospheric / pow(1.0 - (altitude/44330.0), 5.255);
+  // return atmospheric / pow(1.0 - (altitude/44330.0), 5.255);
+  // Pow is not compatible with ESP8266 Arduino IDE. This is a workaround
+  // See http://stackoverflow.com/questions/4985221/how-will-you-implement-powa-b-in-c-condition-follows
+  return atmospheric / exp(5.255 * log(1.0 - (altitude/44330.0)));
 }
 
 /**************************************************************************/
